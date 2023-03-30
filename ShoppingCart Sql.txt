@@ -1,0 +1,899 @@
+CREATE TABLE Product(
+                    ProductID BIGINT IDENTITY(101,1),
+                    ProductName VARCHAR(50),
+                    UnitPrice DECIMAL (18,2),
+                    UnitDiscount DECIMAL(18,2),
+                    CreatedBy VARCHAR(50),
+                    ModifiedBy VARCHAR(50),
+                    CreatedDate DATETIME,
+                    ModifiedDate DATETIME
+                    ,constraint PK_Product_ProductID PRIMARY KEY(ProductID))
+
+
+CREATE TABLE Stock(
+                  StocktID BIGINT IDENTITY(1001,1),
+                  ProductID BIGINT,
+                  Quantity INT,
+                  CreatedBy VARCHAR(50),
+                  ModifiedBy VARCHAR(50),
+                  CreatedDate DATETIME,
+                  ModifiedDate DATETIME
+                  ,constraint PK_Stock_StocktID PRIMARY KEY(StocktID)
+                  ,constraint FK_Stock_Product foreign key (ProductID) REFERENCES Product(ProductID))
+
+create TABLE Purchase(
+                    PurchaseID  BIGINT IDENTITY(10001,1),
+                    ProductID BIGINT ,
+                    Quantity INT,
+                    UnitPrice DECIMAL (18,2),
+                    UnitDiscount DECIMAL(18,2),
+                    TotalDiscount DECIMAL (18,2),
+                    TotalAmount DECIMAL (18,2),
+                    PurchasedDate DATETIME,
+                    CreatedBy VARCHAR(50),
+                    ModifiedBy VARCHAR(50), 
+                    CreatedDate DATETIME,
+                    ModifiedDate DATETIME
+                  ,constraint PK_Purchase_PurchaseID PRIMARY KEY(PurchaseID)
+                  ,constraint FK_Purchase_Product foreign key (ProductID) REFERENCES Product(ProductID))
+
+
+CREATE TABLE _Return(
+                    ReturnID BIGINT IDENTITY(100001,1) ,
+                    PurchaseID BIGINT  ,
+                    ProductID  BIGINT  ,
+                    ReturnedQuantity INT,
+                    ReturnedTotalDiscount  DECIMAL(18,2),    
+                    ReturnedTotalAmount  DECIMAL(18,2),
+                    ReturnedDate DATETIME,
+                    CreatedBy VARCHAR(50),
+                    ModifiedBy VARCHAR(50),
+                    CreatedDate DATETIME,
+                    ModifiedDate DATETIME
+                  ,constraint PK__Return_ReturnID PRIMARY KEY(ReturnID)
+                  ,constraint FK__Return_Product foreign key (ProductID) REFERENCES Product(ProductID)
+                  ,constraint FK__Return_Purchase foreign key (ProductID) REFERENCES Product(ProductID))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+select * from Product 
+
+go
+alter Procedure sp_GetId
+@ProductId bigint
+as 
+begin
+select * from Product where ProductId = @ProductId
+end
+
+go
+alter Procedure sp_InsertProduct(
+@ProductName varchar(50),
+@UnitPrice decimal(18,2),
+@UnitDiscount decimal(18,2),
+@CreatedBy varchar(50),
+@ModifiedBy varchar(50),
+@CreatedDate datetime,
+@ModifiedDate datetime)
+As
+Begin
+insert into Product(
+ProductName,
+UnitPrice,
+UnitDiscount,
+CreatedBy,
+ModifiedBy,
+CreatedDate,
+ModifiedDate)
+values(
+@ProductName,
+@UnitPrice,
+@UnitDiscount,
+@CreatedBy,
+@ModifiedBy,
+@CreatedDate,
+@ModifiedDate)
+end
+go
+
+select * from Product
+set  
+identity_insert Product on
+
+execute sp_InsertProduct 107,'Samsung',18000,1200,'Monish','ccccc','2022-01-01','2023-01-01'
+
+
+
+go
+alter procedure sp_UpdateProduct(
+@ProductId bigint,
+@ProductName varchar(50),
+@UnitPrice decimal(18,2),
+@UnitDiscount decimal(18,2),
+@ModifiedBy varchar(50),
+@ModifiedDate datetime)
+as
+begin
+update Product set ProductName = @ProductName,UnitPrice = @UnitPrice,UnitDiscount = @UnitDiscount,ModifiedBy = @ModifiedBy,ModifiedDate = GETDATE()
+where ProductID = @ProductId
+end
+
+
+
+go
+alter procedure sp_DeleteProduct
+@ProductId bigint
+as
+begin
+delete from Product where ProductId = @ProductId
+end
+go
+
+go
+alter procedure sp_GetAllProducts
+@ProductId bigint
+as
+begin
+select * from Product where ProductId = @ProductId
+end
+go
+
+exec sp_GetAllProducts 102
+
+
+go
+create procedure sp_getstockbyproductid
+@ProductID bigint
+as
+begin
+select * from Stock where ProductID = @ProductID
+end
+go
+
+
+drop table Stock 
+
+select * from Stock
+
+go
+alter Procedure sp_InsertStock(
+@ProductId bigint,
+@Quantity decimal(18,2),
+@CreatedBy varchar(50),
+@ModifiedBy varchar(50),
+@CreatedDate datetime,
+@ModifiedDate datetime)
+As
+Begin
+insert into Stock(
+ProductID,
+Quantity,
+CreatedBy,
+ModifiedBy,
+CreatedDate,
+ModifiedDate)
+values(
+@ProductId,
+@Quantity,
+@CreatedBy,
+@ModifiedBy,
+@CreatedDate,
+@ModifiedDate)
+end
+go
+
+select * from Product
+
+ 
+
+---TURN OFF IDENTITY
+set  
+identity_insert Product on
+
+
+execute sp_InsertStock 104,1,'Aakash','Chetty','2022-01-01','2023-01-01'
+execute sp_InsertStock 103,1,'Aakash','Chetty','2022-01-01','2023-01-01'
+
+delete from Stock
+
+GO
+alter procedure sp_UpdateStock(
+	@StockId bigint,
+	@ProductId bigint,
+	@Quantity decimal(18,2),
+	@ModifiedBy varchar(50),
+	@ModifiedDate datetime)
+as
+begin
+update
+	Stock 
+set
+	ProductID = @ProductId,
+	Quantity = @Quantity,
+	ModifiedBy = @ModifiedBy,
+	ModifiedDate = GETDATE()
+where
+	StocktID = @StockId
+end
+
+
+
+go
+alter procedure sp_DeleteStock
+	@StockId bigint
+as
+begin
+delete from 
+	Stock 
+where 
+	StocktID = @StockId
+end
+go
+
+drop table  stock
+
+CREATE TABLE Stock(
+                  StocktID BIGINT IDENTITY(1001,1) PRIMARY KEY,
+                  ProductID BIGINT FOREIGN KEY REFERENCES Product(ProductID),
+                  Quantity INT,
+                  CreatedBy VARCHAR(50),
+                  ModifiedBy VARCHAR(50),
+                  CreatedDate DATETIME,
+                  ModifiedDate DATETIME)
+
+
+
+select * from stock
+select * from Product
+go
+alter procedure sp_getallStock
+as 
+begin
+select * from stock
+end
+
+exec sp_getallStock
+
+
+go
+alter PROCEDURE sp_Upsert 
+	@StocktId bigint,
+	@ProductId bigint,
+	@Quantity INT,
+	@CreatedBy varchar(50),
+	@ModifiedBy varchar(50)
+AS  
+BEGIN  
+IF  EXISTS (SELECT * FROM Stock  WHERE StocktID = @StocktId)  
+UPDATE
+	dbo.Stock  
+SET
+	ProductID = @ProductId,
+	Quantity = Quantity +  @Quantity,
+	ModifiedBy = @ModifiedBy,
+	ModifiedDate = GETDATE()
+WHERE 
+	StocktID = @StocktId  
+ELSE  
+INSERT INTO Stock(
+	ProductID,
+	Quantity,
+	CreatedBy,
+	CreatedDate) 
+VALUES
+	(@ProductId,
+	@quantity,
+	@CreatedBy,
+	GETDATE())
+END
+go
+
+
+EXECUTE sp_Upsert 1002,102,5,'Monish','AAkash'
+
+go
+CREATE PROCEDURE SP_StockSummary
+AS
+SELECT StocktID ,
+       stock.ProductID ,
+       ProductName,
+       UnitPrice,
+       Quantity,
+       UnitPrice * Quantity AS Totalamount
+       FROM Stock 
+       JOIN Product 
+       ON Product.ProductID=Stock.ProductID
+
+exec SP_StockSummary
+
+
+
+
+
+
+
+
+
+
+go
+create Procedure sp_StockQuantity
+@ProductID bigint
+as 
+begin 
+select Quantity from Stock where ProductID = @ProductID
+end
+
+
+go
+create Procedure sp_UpdateStockReamaingQuantity
+@ProductID bigint 
+as
+begin
+update Stock set Quantity = RemainingQuantity  where ProductID = @ProductID
+end
+
+
+
+
+go
+alter procedure sp_GETPURCHASEID
+	@PurchaseID bigint
+as
+begin
+select 
+	* 
+from 
+	Purchase 
+where 
+	PurchaseID = @PurchaseID
+end
+go
+
+
+
+go
+alter procedure sp_DeletePurchase
+@PurchaseID bigint
+as
+begin
+delete from Purchase where PurchaseID = @PurchaseID
+end
+go
+
+
+
+go
+alter Procedure sp_InsertPurchase(
+	@ProductId bigint,
+	@Quantity decimal(18,2),
+	@UnitPrice decimal(18,2),
+	@UnitDiscount decimal(18,2),
+	@TotalDiscount decimal(18,2),
+	@TotalAmount decimal(18,2),
+	@PurchasedDate datetime,
+	@CreatedBy varchar(50),
+	@ModifiedBy varchar(50),
+	@CreatedDate datetime,
+	@ModifiedDate datetime)
+As
+Begin
+insert into Purchase(
+	ProductID,
+	Quantity,
+	UnitPrice,
+	UnitDiscount,
+	TotalDiscount,
+	TotalAmount,
+	PurchasedDate,
+	CreatedBy,
+	ModifiedBy,
+	CreatedDate,
+	ModifiedDate)
+values(
+	@ProductId,
+	@Quantity,
+	@UnitPrice,
+	@UnitDiscount,
+	@TotalDiscount,
+	@TotalAmount,
+	@PurchasedDate,
+	@CreatedBy,
+	@ModifiedBy,
+	@CreatedDate,
+	@ModifiedDate)
+end
+go
+
+select * from Stock
+select * from Purchase
+
+
+execute sp_InsertPurchase 10001,101,2,299,5,10,288,'2022-01-01','Aakash','paul','2022-01-01','2023-01-01'
+
+---TURN OFF IDENTITY
+set  
+identity_insert Purchase on
+
+
+--GET PURCHASE PROCEDURE
+GO 
+alter PROCEDURE sp_PURCHASESTORE 
+AS
+
+SELECT  PurchaseID ,
+        Purchase.ProductID ,
+		ProductName,
+        quantity,
+        UnitPrice= Product.UnitPrice,
+        UnitDiscount=Product.UnitDiscount/100,
+        TotalDiscount  = quantity*(Product.UnitPrice*Product.UnitDiscount),
+        TotalAmount=(Quantity*Product.UnitPrice)-TotalDiscount,
+		Purchase.PurchasedDate,
+        Purchase.CreatedBy,
+        Purchase.ModifiedBy,
+        Purchase.CreatedDate,
+        Purchase.ModifiedDate
+FROM Purchase 
+JOIN Product
+ON Product.ProductID =Purchase.ProductID
+
+exec sp_PURCHASESTORE 
+
+GO 
+CREATE PROCEDURE SP_PURCHASEBALANCE
+AS
+SELECT Purchase.ProductID,
+       ProductName,
+       Purchase.PurchaseID,
+       PurchasedDate,
+       Quantity= Quantity-ReturnedQuantity,
+       Product.UnitPrice ,
+       Product.UnitDiscount,
+       TotalDiscount=TotalDiscount-ReturnedTotalDiscount ,
+       TotalAmount=TotalAmount-ReturnedTotalAmount
+       FROM Purchase
+       JOIN _Return 
+       ON _Return.ProductID =Purchase.ProductID 
+       JOIN Product 
+       ON Product.ProductID =Purchase.ProductID
+
+exec SP_PURCHASEBALANCE
+
+
+
+select  * from Stock 
+select * from Product
+select * from Purchase
+select * from _Return
+drop table Product
+drop table Stock
+drop table Purchase
+drop table _Return
+
+go
+alter PROCEDURE sp_UpsertPurchase 
+@PurchaseID bigint,
+@ProductId bigint,
+@Quantity INT,
+@UnitPrice decimal(18,2),
+@UnitDiscount decimal(18,2),
+@TotalDiscount decimal(18,2),
+@TotalAmount decimal(18,2),
+@PurchasedDate datetime,
+@CreatedBy varchar(50),
+@ModifiedBy varchar(50),
+@CreatedDate datetime,
+@ModifiedDate datetime
+AS  
+BEGIN  
+IF  EXISTS (SELECT * FROM Purchase  WHERE PurchaseID = @PurchaseID)  
+UPDATE Purchase 
+SET ProductID =@ProductId,Quantity = @quantity,UnitPrice =@UnitPrice,UnitDiscount = @UnitDiscount,TotalDiscount = @TotalDiscount,TotalAmount = @TotalAmount,PurchasedDate = GETDATE(),CreatedBy = @CreatedBy,ModifiedBy = @ModifiedBy,CreatedDate = GETDATE(),ModifiedDate = GETDATE()
+WHERE PurchaseID = @PurchaseID 
+ELSE  
+INSERT INTO Purchase(PurchaseID,ProductID,Quantity,UnitPrice,UnitDiscount,TotalDiscount,TotalAmount,PurchasedDate,CreatedBy,ModifiedBy,CreatedDate,ModifiedDate) 
+VALUES(@PurchaseID,@ProductId,@quantity,@UnitPrice,@UnitDiscount,@TotalDiscount,@TotalAmount,GETDATE(),@CreatedBy,@ModifiedBy,GETDATE(),GETDATE())
+END
+go
+
+execute sp_UpsertPurchase 10001,101,10,400,10,15,375,'2022-01-01','Mathan','Aakash','2022-01-01','2023-01-01'
+
+
+SELECT * FROM Product
+SELECT * FROM Stock
+select * from Purchase
+select * from _Return
+
+
+SELECT * FROM _Return
+
+drop table Purchase 
+drop table _Return
+
+exec sp_rename 'PURCHASE', 'Purchase'
+
+CREATE TABLE PURCHASE(
+PurchaseID BIGINT IDENTITY(10001,1) PRIMARY KEY,
+ProductID BIGINT FOREIGN KEY REFERENCES Product(ProductID),
+Quantity INT,
+UnitPrice DECIMAL(18,2),
+UnitDiscount DECIMAL(18,2),
+TotalDiscount DECIMAL(18,2),
+TotalAmount DECIMAL(18,2),
+PurchasedDate DATETIME,
+CreatedBy VARCHAR(50),
+ModifiedBy VARCHAR(50),
+CreatedDate DATETIME,
+ModifiedDate DATETIME)
+
+
+
+CREATE TABLE _Return(
+ReturnID BIGINT IDENTITY (10,1) PRIMARY KEY,
+PurchaseID BIGINT FOREIGN KEY REFERENCES Purchase(PurchaseID),
+ProductID BIGINT FOREIGN KEY REFERENCES Product(ProductID),
+ReturnedQuantity INT,
+ReturnedTotalDiscount DECIMAL(18,2),
+ReturnedTotalAmount DECIMAL(18,2),
+ReturnedDate DATETIME,
+CreatedBy VARCHAR(50),
+ModifiedBy VARCHAR(50),
+CreatedDate DATETIME,
+ModifiedDate DATETIME)
+
+
+go
+create procedure sp_GetReturnId
+	@ReturnID bigint
+as
+begin
+select * from _Return where ReturnID = @ReturnID
+end
+go
+
+
+go
+alter Procedure sp_InsertReturn(
+	@PurchaseID bigint,
+	@ProductId bigint,
+	@ReturnedQuantity int,
+	@ReturnedTotalDiscount decimal(18,2),
+	@ReturnedTotalAmount decimal(18,2),
+	@ReturnedDate datetime,
+	@CreatedBy varchar(50),
+	@ModifiedBy varchar(50),
+	@CreatedDate datetime,
+	@ModifiedDate datetime)
+As
+Begin
+insert into _Return(
+	PurchaseID,
+	ProductID,
+	ReturnedQuantity,
+	ReturnedTotalDiscount,
+	ReturnedTotalAmount,
+	ReturnedDate,
+	CreatedBy,
+	ModifiedBy,
+	CreatedDate,
+	ModifiedDate)
+values(
+	@PurchaseID,
+	@ProductId,
+	@ReturnedQuantity,
+	@ReturnedTotalDiscount,
+	@ReturnedTotalAmount,
+	@ReturnedDate,
+	@CreatedBy,
+	@ModifiedBy,
+	@CreatedDate,
+	@ModifiedDate)
+end
+go
+
+
+go
+alter PROCEDURE sp_UpsertPurchase 
+@ReturnID bigint,
+@PurchaseID bigint,
+@ProductId bigint,
+@ReturnedQuantity int,
+@ReturnedTotalDiscount decimal(18,2),
+@ReturnedTotalAmount decimal(18,2),
+@ReturnedDate datetime,
+@CreatedBy varchar(50),
+@ModifiedBy varchar(50),
+@CreatedDate datetime,
+@ModifiedDate datetime
+AS  
+BEGIN  
+IF  EXISTS (SELECT * FROM _Return  WHERE ReturnID = @ReturnID)  
+UPDATE _Return 
+SET PurchaseID = @PurchaseID, ProductID =@ProductId,ReturnedQuantity = @ReturnedQuantity,ReturnedTotalDiscount = @ReturnedTotalDiscount ,ReturnedTotalAmount = @ReturnedTotalAmount,ReturnedDate = GETDATE(),CreatedBy = @CreatedBy,ModifiedBy = @ModifiedBy,CreatedDate = GETDATE(),ModifiedDate = GETDATE()
+WHERE PurchaseID = @PurchaseID 
+ELSE  
+INSERT INTO _Return(ReturnID,PurchaseID,ProductID,ReturnedQuantity,ReturnedTotalDiscount,ReturnedTotalAmount,ReturnedDate,CreatedBy,ModifiedBy,CreatedDate,ModifiedDate) 
+VALUES(@ReturnID,@PurchaseID,@ProductId,@ReturnedQuantity,@ReturnedTotalDiscount,@ReturnedTotalAmount,GETDATE(),@CreatedBy,@ModifiedBy,GETDATE(),GETDATE())
+END
+go
+
+
+go
+create procedure sp_DeleteReturn
+@ReturnID bigint
+as
+begin
+delete from _Return where ReturnID = @ReturnID
+end
+go
+
+go
+Alter procedure SP_ADDPURCHASE(@ProductID bigint,@Quantity int,@CreatedBy varchar(50))
+as
+begin
+IF NOT EXISTS (SELECT * FROM PURCHASE p WHERE ProductID = @ProductID)
+declare @UnitPrice decimal(18,2),@UnitDiscount decimal(18,2)
+select @UnitPrice = UnitPrice,@UnitDiscount = UnitDiscount from Product where ProductID = @ProductID
+declare @TotalDiscount decimal(18,2),@TotalAmount decimal (18,2)
+set @TotalDiscount = @Quantity * (@UnitPrice * @UnitDiscount)
+set @TotalAmount = ((@Quantity * @UnitPrice) - @TotalDiscount)
+insert into PURCHASE (ProductID,Quantity,UnitPrice,UnitDiscount,TotalDiscount,TotalAmount,PurchasedDate,CreatedBy)
+values
+(@ProductID,@Quantity,@UnitPrice,@UnitDiscount,@TotalDiscount,@TotalAmount,GETDATE(),@CreatedBy)
+update Stock set Quantity =  Quantity - @Quantity where ProductID = @ProductID
+end
+go
+exec [dbo].[SP_ADDPURCHASE] 102,4,'Monish'
+go
+select * from PURCHASE
+select * from Stock
+select * from _Return
+select * from Product
+
+
+drop table Product
+drop table Stock
+drop table Purchase
+drop table _Return
+
+go
+ALTER PROCEDURE sp_DeletePurchaseAndUpdateStock (@PurchaseID INT)
+AS
+BEGIN
+    DECLARE @ProductID INT, @Quantity INT
+
+    SELECT @ProductID = ProductID, @Quantity = Quantity
+    FROM Purchase
+    WHERE PurchaseID = @PurchaseID
+
+    DELETE FROM Purchase
+    WHERE PurchaseID = @PurchaseID
+
+    UPDATE Stock
+    SET Quantity = Quantity + @Quantity
+    WHERE ProductID = @ProductID
+END
+go
+
+go
+CREATE procedure SP_ADDRETURN (
+	@PurchaseID bigint,
+	@ProductID bigint,@Quantity int,@CreatedBy varchar(50))
+as
+begin
+declare  @ExistProductID bigint, @ExistQuantity int,@TotalDiscount decimal(18,2)
+ SELECT @ExistProductID = ProductID,@ExistQuantity = Quantity,@TotalDiscount = TotalDiscount
+ FROM Purchase  
+ WHERE PurchaseID = @PurchaseID
+declare @UnitPrice decimal(18,2),@UnitDiscount decimal(18,2)
+select @UnitPrice = UnitPrice,@UnitDiscount = UnitDiscount from Product where ProductID = @ProductID
+declare @ReturnedTotalDiscount decimal(18,2),@ReturnedTotalAmount decimal (18,2)
+set @ReturnedTotalDiscount = @Quantity * (@UnitPrice * @UnitDiscount)
+set @ReturnedTotalAmount = ((@Quantity * @UnitPrice) - @TotalDiscount)
+insert into _Return (PurchaseID,ProductID,ReturnedQuantity,ReturnedTotalDiscount,ReturnedTotalAmount,ReturnedDate,CreatedBy,CreatedDate)
+values
+(@PurchaseID,@ProductID,@Quantity,@UnitPrice,@UnitDiscount,@ReturnedTotalDiscount,@ReturnedTotalAmount,GETDATE(),@CreatedBy,GETDATE())
+--update Stock set Quantity =  Quantity - @Quantity where ProductID = @ProductID
+end
+go
+
+select PurchaseID,ProductID,Quantity from Purchase where PurchaseID = PurchaseID
+
+select * from Purchase
+select * from _Return
+
+--exec sp_ReturnProduct 10001,101,6
+
+--go
+--CREATE PROCEDURE sp_ReturnProduct (@PurchaseID INT, @ProductID INT, @Quantity INT)
+--AS
+--BEGIN
+--    DECLARE @CurrentQuantity INT, @CurrentProductID INT
+
+--     --retrieve the current product ID and quantity from the purchase table
+--    SELECT  @CurrentProductID = ProductID, @CurrentQuantity = Quantity
+--    FROM Purchase
+--    WHERE PurchaseID = @PurchaseID
+
+--     validate the input values against the current values in the purchase table
+--    IF (@CurrentProductID IS NOT NULL AND (@ProductID IS NULL OR @ProductID = @CurrentProductID)) AND (@CurrentQuantity IS NOT NULL AND (@Quantity IS NULL OR @Quantity = @CurrentQuantity))
+--    BEGIN
+--         --update the purchase record
+--        UPDATE Purchase
+--        SET Quantity = Quantity - @Quantity
+--        WHERE PurchaseID = @PurchaseID
+
+--        -- update the stock table
+--        UPDATE Stock
+--        SET Stock = Stock + @Quantity
+--        WHERE ProductID = @CurrentProductID
+--    END
+--    ELSE
+--    BEGIN
+--         return an error message if the input values don't match the current values in the purchase table or the purchase record doesn't exist
+--        RAISERROR ('The specified PurchaseID, ProductID, and/or Quantity values do not match the current values in the purchase table, or the purchase record does not exist.', 16, 1)
+--    END
+--END
+--go
+--GO
+--CREATE PROCEDURE SP_ProcessReturn (@PurchaseID INT, @ProductID INT, @ReturnedQuantity INT)
+--AS
+--BEGIN
+--    DECLARE @UnitPrice DECIMAL(18, 2), @UnitDiscount DECIMAL(18, 2), @ReturnedTotalDiscount DECIMAL(18, 2), @ReturnedTotalAmount DECIMAL(18, 2)
+
+--    BEGIN TRY
+--        BEGIN TRANSACTION
+
+--        IF NOT EXISTS (SELECT * FROM Purchase WHERE PurchaseID = @PurchaseID AND ProductID = @ProductID)
+--        BEGIN
+--            ROLLBACK TRANSACTION
+--            RAISERROR ('Invalid PurchaseID and/or ProductID', 16, 1)
+--        END
+
+--        DECLARE @PurchasedQuantity INT
+--        SELECT @PurchasedQuantity = Quantity FROM Purchase WHERE PurchaseID = @PurchaseID AND ProductID = @ProductID
+
+--        IF @ReturnedQuantity > @PurchasedQuantity
+--        BEGIN
+--            ROLLBACK TRANSACTION
+--            RAISERROR ('Returned quantity exceeds purchased quantity', 16, 1)
+--        END
+
+--        SELECT @UnitPrice = UnitPrice, @UnitDiscount = UnitDiscount FROM Product WHERE ProductID = @ProductID
+--        SET @UnitDiscount = @UnitDiscount / 100.0
+--        SET @ReturnedTotalDiscount = @ReturnedQuantity * (@UnitPrice * @UnitDiscount)
+--        SET @ReturnedTotalAmount = (@ReturnedQuantity * @UnitPrice) - @ReturnedTotalDiscount
+
+--        COMMIT TRANSACTION
+--    END TRY
+--    BEGIN CATCH
+--        IF @@TRANCOUNT > 0
+--            ROLLBACK TRANSACTION
+--        DECLARE @ErrorMessage NVARCHAR(4000), @ErrorSeverity INT, @ErrorState INT
+--        SELECT @ErrorMessage = ERROR_MESSAGE(), @ErrorSeverity = ERROR_SEVERITY(), @ErrorState = ERROR_STATE()
+--        RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState)
+--    END CATCH
+--END
+--GO
+EXEC SP_ProcessReturn 10001,101,1
+
+SELECT * FROM PURCHASE
+SELECT * FROM _RETURN
+SELECT * FROM STOCK
+
+DROP TABLE PURCHASE
+
+
+go
+Alter procedure SP_ADDRETURN (@PurchaseID bigint,@ProductID bigint,@ReturnedQuantity int,@CreatedBy varchar(50))
+as
+begin
+declare  @ExistProductID bigint, @ExistQuantity int,@TotalDiscount decimal(18,2)
+ SELECT @ExistProductID = ProductID,@ExistQuantity = Quantity,@TotalDiscount = TotalDiscount
+ FROM Purchase  
+ WHERE PurchaseID = @PurchaseID
+declare @UnitPrice decimal(18,2),@UnitDiscount decimal(18,2)
+select @UnitPrice = UnitPrice,@UnitDiscount = UnitDiscount from Product where ProductID = @ProductID
+declare @ReturnedTotalDiscount decimal(18,2),@ReturnedTotalAmount decimal (18,2)
+set @ReturnedTotalDiscount = @ReturnedQuantity * (@UnitPrice * @UnitDiscount)
+set @ReturnedTotalAmount = ((@ReturnedQuantity * @UnitPrice) - @TotalDiscount)
+insert into _Return (PurchaseID,ProductID,ReturnedQuantity,ReturnedTotalDiscount,ReturnedTotalAmount,ReturnedDate,CreatedBy,CreatedDate)
+values
+(@PurchaseID,@ProductID,@ReturnedQuantity,@ReturnedTotalDiscount,@ReturnedTotalAmount,GETDATE(),@CreatedBy,GETDATE())
+update Stock set Quantity =  Quantity + @ReturnedQuantity where ProductID = @ProductID
+end
+go
+
+
+GO 
+Create PROCEDURE RETURNSTORE 
+AS
+SELECT ReturnID,
+       _Return.ProductID,
+       ProductName,
+       _Return.PurchaseID,
+       ReturnedDate,
+       ReturnedQuantity,
+       UnitPrice =Product.UnitPrice,
+       UnitDiscount = (Product.UnitDiscount/ 100),
+       ReturnedTotalDiscount = Quantity * (Product.UnitPrice  * Product.UnitDiscount),
+       ReturnedTotalAmount = ((Quantity * Product.UnitPrice) - TotalDiscount)
+       FROM _Return 
+       JOIN Product 
+       ON Product.ProductID=_Return.ProductID 
+       JOIN Purchase 
+       ON Purchase.ProductID=Product.ProductID
+	   go
+
+exec RETURNSTORE
+
+
+--delete return
+
+
+GO
+CREATE PROCEDURE DELETERETURN
+@ReturnID BIGINT
+
+
+AS 
+BEGIN
+IF EXISTS(SELECT PurchaseID FROM _Return  WHERE ReturnID   = 100001)
+DELETE FROM _Return WHERE ReturnID   = @ReturnID
+END
+
+
+go
+Create PROCEDURE sp_DeleteReturnPurchaseAndUpdateStock (@PurchaseID INT)
+AS
+BEGIN
+    DECLARE @ProductID INT, @ReturnedQuantity INT
+
+    -- retrieve the product ID and quantity from the purchase table
+    SELECT @ProductID = ProductID, @Quantity = Quantity
+    FROM Purchase
+    WHERE PurchaseID = @PurchaseID
+
+    -- delete the purchase record
+    DELETE FROM _Return
+    WHERE PurchaseID = @PurchaseID
+
+    -- update the stock table
+    UPDATE Stock
+    SET Quantity = Quantity + @ReturnedQuantity
+    WHERE ProductID = @ProductID
+END
+go
+
+ exec sp_DeleteReturnPurchaseAndUpdateStock 10001
+
+ select * from product
+SELECT * FROM PURCHASE
+SELECT * FROM _RETURN
+SELECT * FROM STOCK
+
+drop table Purchase
+drop table _return
+drop table stock
+drop table product

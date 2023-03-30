@@ -1,0 +1,1519 @@
+CREATE TABLE Student(
+StudentId BIGINT IDENTITY(101,1) PRIMARY KEY,
+RollNo VARCHAR(100)NOT NULL UNIQUE,
+FirstName VARCHAR(100)NOT NULL,
+Lastname VARCHAR(100)NOT NULL,
+Gender VARCHAR(10)NOT NULL,
+DateOfBirth DATETIME NOT NULL,
+DateOfAdmission DATETIME NOT NULL,
+DateOfDiscontinue DATETIME,
+CreatedDate DATETIME NOT NULL,
+ModifiedDate DATETIME
+)
+
+select * from Student
+
+insert into Student (RollNo,FirstName,Lastname,Gender,DateOfBirth,DateOfAdmission,CreatedDate) values ('IND101','Mathan','Sankar','Male','01-01-1997','01-01-2000',GETDATE())
+insert into Student (RollNo,FirstName,Lastname,Gender,DateOfBirth,DateOfAdmission,CreatedDate) values ('IND102','Monish','Rajini','Male','01-01-1999','01-01-2000',GETDATE())
+insert into Student (RollNo,FirstName,Lastname,Gender,DateOfBirth,DateOfAdmission,CreatedDate) values ('IND103','Jaya','Shree','Female','01-01-1998','01-01-2000',GETDATE())
+insert into Student (RollNo,FirstName,Lastname,Gender,DateOfBirth,DateOfAdmission,CreatedDate) values ('IND104','Paul','John','Male','01-01-1999','01-01-2000',GETDATE())
+insert into Student (RollNo,FirstName,Lastname,Gender,DateOfBirth,DateOfAdmission,CreatedDate) values ('IND105','Keerthy','Suresh','Female','01-01-1996','01-01-2000',GETDATE())
+insert into Student (RollNo,FirstName,Lastname,Gender,DateOfBirth,DateOfAdmission,CreatedDate) values ('IND106','Subha','Shree','Female','01-01-1995','01-01-2000',GETDATE())
+
+GO
+CREATE PROCEDURE sp_GetStudent
+AS
+BEGIN
+SELECT 
+	* 
+FROM
+	Student
+END
+
+EXECUTE sp_GetStudent
+
+
+GO
+CREATE PROCEDURE sp_GetStudentId
+@StudentId BIGINT
+AS
+BEGIN
+SELECT
+	* 
+FROM 
+	Student
+WHERE 
+	StudentId = @StudentId
+END
+
+
+CREATE PROCEDURE sp_GetStudentByRollNo
+@RollNo varchar(20)
+AS
+BEGIN
+SELECT
+	*
+FROM
+	Student
+WHERE
+	RollNo = @RollNo
+END
+
+
+
+GO
+ALTER PROCEDURE sp_AddStudent
+@RollNo VARCHAR(100),
+@FirstName VARCHAR(100),
+@Lastname VARCHAR(100),
+@Gender	VARCHAR(10),
+@DateOfBirth DATETIME,
+@DateOfAdmission DATETIME
+AS 
+BEGIN
+INSERT INTO Student
+	(RollNo,
+	FirstName,
+	Lastname,
+	Gender,
+	DateOfBirth,
+	DateOfAdmission,
+	CreatedDate)
+VALUES
+	(@RollNo,
+	@FirstName,
+	@Lastname,
+	@Gender,
+	@DateOfBirth,
+	@DateOfAdmission,
+	GETDATE())
+END
+
+EXECEUTE sp_AddStudent
+
+
+GO
+ALTER PROCEDURE sp_UpsertStudent
+@StudentId BIGINT,
+@RollNo VARCHAR(100),
+@FirstName VARCHAR(100),
+@Lastname VARCHAR(100),
+@Gender VARCHAR(10),
+@DateOfBirth DATETIME,
+@DateOfAdmission DATETIME
+AS
+BEGIN
+IF  EXISTS 
+(SELECT
+	* 
+FROM
+	Student 
+WHERE 
+	StudentId = @StudentId)
+UPDATE Student
+SET
+	RollNo = @RollNo,
+	FirstName = @FirstName,
+	LastName =@Lastname,
+	Gender = @Gender,
+	DateOfBirth =@DateOfBirth,
+	DateOfAdmission=@DateOfAdmission,
+	DateOfDiscontinue =GETDATE(),
+	ModifiedDate =GETDATE()
+WHERE
+	StudentId = @StudentId
+ELSE
+INSERT INTO Student
+	(RollNo,
+	FirstName,
+	LastName,
+	Gender,
+	DateOfBirth,
+	DateOfAdmission,
+	CreatedDate)
+VALUES
+	(@RollNo,
+	@FirstName,
+	@Lastname,
+	@Gender,
+	@DateOfBirth,
+	@DateOfAdmission,
+	GETDATE())
+END
+
+
+
+
+GO
+CREATE PROCEDURE sp_DeleteStudent
+@StudentId BIGINT
+AS
+BEGIN
+DELETE
+FROM 
+	Student 
+WHERE 
+	StudentId = @StudentId
+END
+
+GO
+CREATE PROCEDURE sp_DeleteRollNo
+@RollNo VARCHAR(20)
+AS
+BEGIN
+DELETE
+FROM 
+	Student
+WHERE
+	RollNo=@RollNo
+END
+
+
+----------------------------------------------------------------------------------------------
+CREATE TABLE Academic(
+AcademicId BIGINT IDENTITY(1,1)PRIMARY KEY,
+AcademicStartYear INT NOT NULL,
+AcademicEndYear INT NOT NULL ,
+CreatedDate DATETIME NOT NULL,
+ModifiedDate DATETIME)
+
+select * from Academic
+
+
+insert into Academic (AcademicStartYear,AcademicEndYear,CreatedDate) values (2000,2001,GETDATE())
+insert into Academic (AcademicStartYear,AcademicEndYear,CreatedDate) values (2001,2002,GETDATE())
+insert into Academic (AcademicStartYear,AcademicEndYear,CreatedDate) values (2002,2003,GETDATE())
+insert into Academic (AcademicStartYear,AcademicEndYear,CreatedDate) values (2003,2004,GETDATE())
+insert into Academic (AcademicStartYear,AcademicEndYear,CreatedDate) values (2004,2005,GETDATE())
+insert into Academic (AcademicStartYear,AcademicEndYear,CreatedDate) values (2005,2006,GETDATE())
+
+
+
+GO
+CREATE PROCEDURE sp_GetAcademic
+AS
+BEGIN
+SELECT 
+	*
+FROM 
+	Academic 
+END
+
+EXECUTE sp_GetAcademic
+
+
+CREATE  PROCEDURE sp_GetAcademicId
+@AcademicId BIGINT
+AS
+BEGIN
+SELECT
+	* 
+FROM
+	Academic
+WHERE
+	AcademicId = @AcademicId
+END
+
+GO
+CREATE PROCEDURE sp_AddAcademic
+@AcademicStartYear INT,
+@AcademicEndYear INT
+AS
+BEGIN
+INSERT INTO Academic 
+	(AcademicStartYear,
+	AcademicEndYear,
+	CreatedDate) 
+VALUES
+	(@AcademicStartYear,
+	@AcademicEndYear,
+	GETDATE())
+END
+
+
+CREATE PROCEDURE sp_UpsertAcademic
+@AcademicId BIGINT,
+@AcademicStartYear INT,
+@AcademicEndYear INT
+AS
+BEGIN
+IF EXISTS
+(SELECT
+	*
+FROM 
+	Academic 
+WHERE
+	AcademicId = @AcademicId)
+UPDATE
+	Academic 
+SET 
+	AcademicStartYear = @AcademicStartYear,
+	AcademicEndYear =@AcademicEndYear,
+	ModifiedDate = GETDATE()
+WHERE
+	AcademicId = @AcademicId
+ELSE
+insert into Academic 
+	(AcademicStartYear,
+	AcademicEndYear,
+	CreatedDate)
+VALUES
+	(@AcademicStartYear,
+	@AcademicEndYear,
+	GETDATE())
+END
+
+
+
+CREATE PROCEDURE sp_DeleteAcademic
+@AcademicId BIGINT
+AS
+BEGIN
+DELETE 
+FROM
+	Academic 
+WHERE
+	AcademicId = @AcademicId
+END
+
+------------------------------------------------------------------------------------------------
+CREATE TABLE Class(
+ClassId BIGINT IDENTITY(1,1)PRIMARY KEY,
+ClassName VARCHAR(20)NOT NULL,
+Section VARCHAR(2)NOT NULL,
+AcademicId BIGINT  FOREIGN KEY REFERENCES Academic(AcademicId),
+CONSTRAINT unique_class_const UNIQUE(AcademicId,ClassName,Section),
+CreatedDate DATETIME NOT NULL,
+ModifiedDate DATETIME)
+
+select * from Class
+
+insert into Class (ClassName,Section,AcademicId,CreatedDate) values ('1st Standard','A',1,GETDATE())
+insert into Class (ClassName,Section,AcademicId,CreatedDate) values ('2nd Standard','A',1,GETDATE())
+insert into Class (ClassName,Section,AcademicId,CreatedDate) values ('3rd Standard','A',1,GETDATE())
+insert into Class (ClassName,Section,AcademicId,CreatedDate) values ('4th Standard','A',1,GETDATE())
+insert into Class (ClassName,Section,AcademicId,CreatedDate) values ('5th Standard','A',1,GETDATE())
+
+
+CREATE PROCEDURE sp_Getclass
+AS
+BEGIN
+SELECT
+	* 
+FROM
+	Class
+END
+
+
+CREATE PROCEDURE sp_GetClassId
+@ClassId BIGINT
+AS
+BEGIN
+SELECT
+	*
+FROM
+	Class
+WHERE
+	ClassId = @ClassId
+END
+
+
+
+
+CREATE PROCEDURE sp_AddClass
+@ClassName VARCHAR(20),
+@Section VARCHAR(2),
+@AcademicId BIGINT
+AS
+BEGIN
+INSERT INTO Class
+	(ClassName,
+	Section,
+	AcademicId,
+	CreatedDate)
+VALUES
+	(@ClassName,
+	@Section,
+	@AcademicId,
+	GETDATE())
+END
+
+
+
+CREATE PROCEDURE sp_UpsertClass
+@ClassId BIGINT,
+@ClassName VARCHAR(20),
+@Section VARCHAR(2),
+@AcademicId BIGINT
+AS
+BEGIN
+IF EXISTS
+(SELECT
+	*
+FROM
+	Class
+WHERE
+	ClassId = @ClassId)
+UPDATE 
+	class 
+SET
+	ClassName = @ClassName,
+	Section =@Section,
+	AcademicId = @AcademicId,
+	ModifiedDate = GETDATE()
+WHERE 
+	ClassId = @ClassId
+ELSE
+INSERT INTO  Class
+	(ClassName,
+	Section,
+	AcademicId,
+	CreatedDate) 
+VALUES
+	(@ClassName,
+	@Section,
+	@AcademicId,
+	GETDATE())
+END
+
+
+CREATE PROCEDURE sp_DeleteClass
+@ClassId BIGINT
+AS
+BEGIN
+DELETE
+FROM	
+	Class
+WHERE
+	ClassId = @ClassId
+END
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE Groups(
+GroupId BIGINT IDENTITY(1,1)PRIMARY KEY,
+GroupName VARCHAR(20)UNIQUE,
+CreatedDate DATETIME NOT NULL,
+ModifiedDate DATETIME)
+
+
+select * from Groups
+
+insert into Groups (GroupName,CreatedDate) values ('Default',GETDATE())
+insert into Groups (GroupName,CreatedDate) values ('MathsBiology',GETDATE())
+insert into Groups (GroupName,CreatedDate) values ('ComputerScience',GETDATE())
+insert into Groups (GroupName,CreatedDate) values ('Economics',GETDATE())
+
+
+
+CREATE PROCEDURE sp_Groups
+AS
+BEGIN
+SELECT
+	* 
+FROM
+	Groups
+END
+
+CREATE PROCEDURE sp_GroupsId
+@GroupId BIGINT
+AS
+BEGIN
+SELECT
+	* 
+FROM
+	Groups 
+WHERE
+	GroupId = @GroupId
+END
+
+
+CREATE PROCEDURE sp_AddGroups
+@GroupName VARCHAR(20)
+AS
+BEGIN
+INSERT INTO Groups
+	(GroupName,
+	CreatedDate) 
+VALUES
+	(@GroupName,
+	GETDATE())
+END
+
+
+CREATE PROCEDURE sp_Upsertgroups
+@GroupId BIGINT,
+@GroupName VARCHAR(20)
+AS
+BEGIN 
+IF EXISTS
+(SELECT
+	* 
+FROM 
+	Groups 
+WHERE
+	GroupId = @GroupId)
+UPDATE
+	Groups 
+SET 
+	GroupName=@GroupName,
+	ModifiedDate=GETDATE()
+WHERE
+	GroupId = @GroupId
+ELSE
+INSERT INTO Groups
+	(GroupName,
+	CreatedDate)
+VALUES
+	(@GroupName,
+	GETDATE())
+END
+
+
+set  
+identity_insert Groups off
+
+
+
+CREATE PROCEDURE sp_DeleteGroups
+@GroupId BIGINT
+AS
+BEGIN
+DELETE
+FROM	
+	groups 
+WHERE
+	GroupId = @GroupId
+END
+
+---------------------------------------------------------------------------------------------------------------------------
+
+CREATE  TABLE Exams(
+ExamId BIGINT IDENTITY(1001,1)PRIMARY KEY,
+ExamType VARCHAR(20) NOT NULL,
+AcademicId BIGINT FOREIGN KEY REFERENCES Academic(AcademicId)
+CONSTRAINT unique_Exam_const UNIQUE(AcademicId,ExamType),
+CreatedDate DATETIME NOT NULL,
+ModifiedDate DATETIME)
+
+select * from Exams
+
+insert into Exams(ExamType,AcademicId,CreatedDate) values ('Quaterly',1,GETDATE())
+insert into Exams(ExamType,AcademicId,CreatedDate) values ('HalfYearly',1,GETDATE())
+insert into Exams(ExamType,AcademicId,CreatedDate) values ('Annaul',1,GETDATE())
+insert into Exams(ExamType,AcademicId,CreatedDate) values ('Quaterly',2,GETDATE())
+insert into Exams(ExamType,AcademicId,CreatedDate) values ('HalfYearly',2,GETDATE())
+insert into Exams(ExamType,AcademicId,CreatedDate) values ('Annaul',2,GETDATE())
+
+
+
+CREATE PROCEDURE sp_Exams
+AS
+BEGIN
+SELECT
+	*
+FROM
+	Exams
+END
+
+CREATE PROCEDURE sp_ExamsId
+@ExamId BIGINT
+AS
+BEGIN
+SELECT
+	*
+FROM
+	Exams
+WHERE
+	ExamId = @ExamId
+END
+
+
+CREATE PROCEDURE sp_AddExams
+@ExamType VARCHAR(20),
+@AcademicId BIGINT
+AS
+BEGIN
+INSERT INTO Exams 
+	(ExamType,
+	AcademicId,
+	CreatedDate)
+VALUES
+	(@ExamType,
+	@AcademicId,
+	GETDATE())
+END
+
+
+
+
+CREATE PROCEDURE sp_UpsertExams
+@ExamId BIGINT,
+@ExamType VARCHAR(20),
+@AcademicId BIGINT
+AS
+BEGIN
+IF EXISTS
+(SELECT
+	* 
+FROM
+	Exams
+WHERE
+	ExamId =@ExamId)
+UPDATE
+	Exams
+SET
+	ExamType = @ExamType,
+	AcademicId= @AcademicId,
+	ModifiedDate=GETDATE() 
+WHERE
+	ExamId = @ExamId
+ELSE
+INSERT INTO Exams
+	(ExamType,
+	AcademicId,
+	CreatedDate)
+VALUES
+	(@ExamType,
+	@AcademicId,
+	GETDATE())
+END
+
+
+CREATE PROCEDURE sp_DeleteExams
+@ExamId BIGINT
+AS
+BEGIN
+DELETE 
+FROM 
+	Exams 
+WHERE
+	ExamId = @ExamId
+END
+
+---------------------------------------------------------------------------------------------------------------------------------------
+CREATE TABLE Subjects(
+SubjectId BIGINT IDENTITY(1,1)PRIMARY KEY,
+SubjectName VARCHAR(20)NOT NULL,
+SubjectCode VARCHAR(10)NOT NULL,
+GroupId BIGINT FOREIGN KEY REFERENCES Groups(GroupId),
+CONSTRAINT unique_Subjectsname_const UNIQUE(GroupId,SubjectName),
+CONSTRAINT unique_Subjectscode_const UNIQUE(GroupId,SubjectCode),
+CreatedDate DATETIME not null,
+ModifiedDate DATETIME)
+
+
+select * from Subjects
+
+insert into Subjects(SubjectName,SubjectCode,GroupId,CreatedDate,ModifiedDate) values('Tamil','TAM001',1,GETDATE(),getdate())
+insert into Subjects(SubjectName,SubjectCode,GroupId,CreatedDate,ModifiedDate) values('English','ENG002',1,GETDATE(),getdate())
+insert into Subjects(SubjectName,SubjectCode,GroupId,CreatedDate,ModifiedDate) values('Maths','MAT003',1,GETDATE(),getdate())
+insert into Subjects(SubjectName,SubjectCode,GroupId,CreatedDate,ModifiedDate) values('Science','SCI004',1,GETDATE(),getdate())
+insert into Subjects(SubjectName,SubjectCode,GroupId,CreatedDate,ModifiedDate) values('Social','SOC005',1,GETDATE(),getdate())
+
+
+
+
+CREATE PROCEDURE sp_GetSubjects
+AS
+BEGIN
+SELECT
+	* 
+FROM
+	Subjects
+END
+
+
+CREATE PROCEDURE sp_GetSubjectId
+@SubjectId BIGINT
+AS
+BEGIN
+SELECT
+	*
+FROM
+	Subjects
+WHERE
+	SubjectId = @SubjectId
+END
+
+
+CREATE PROCEDURE sp_AddSubjects
+@SubjectName VARCHAR(20),
+@SubjectCode VARCHAR(10),
+@GroupId BIGINT
+AS
+BEGIN
+INSERT INTO Subjects
+	(SubjectName,
+	SubjectCode,
+	GroupId,
+	CreatedDate)
+VALUES
+	(@SubjectName,
+	@SubjectCode,
+	@GroupId,
+	GETDATE())
+END
+
+
+
+CREATE  PROCEDURE sp_DeleteSubjects
+@SubjectId BIGINT 
+AS
+BEGIN
+DELETE
+FROM
+Subjects
+WHERE 
+	SubjectId = @SubjectId
+END
+
+
+
+CREATE PROCEDURE sp_UpsertSubjects
+@SubjectId BIGINT,
+@SubjectName VARCHAR(20),
+@SubjectCode VARCHAR(10),
+@GroupId BIGINT
+AS
+BEGIN
+IF EXISTS
+(SELECT
+	*
+FROM
+	Subjects
+WHERE 
+	SubjectId = @SubjectId)
+UPDATE
+	Subjects 
+SET
+	SubjectName=@SubjectName,
+	SubjectCode=@SubjectCode,
+	GroupId=@GroupId,
+	ModifiedDate=GETDATE()
+WHERE 
+	SubjectId=@SubjectId
+ELSE
+INSERT INTO Subjects
+	(SubjectName,
+	SubjectCode,
+	GroupId,
+	CreatedDate)
+VALUES
+	(@SubjectName,
+	@SubjectCode,
+	@GroupId,
+	GETDATE())
+END
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+--create table AcademicStudent(
+--AcademicStudentId bigint identity(1,1)primary key,
+--StudentId bigint foreign key references Student(StudentId),
+--AcademicId bigint foreign key references Academic(AcademicId),
+--ClassId bigint foreign key references ClassTable(ClassId),
+--GroupId bigint foreign key references Groups(GroupId),
+--IsPassed int not null,
+--CONSTRAINT unique_Ispass_const unique(AcademicId,IsPassed),
+--CONSTRAINT unique_Isfail_const unique(ClassId,IsPassed),
+--CONSTRAINT unique_Student_const unique(StudentId,AcademicId),
+--CONSTRAINT unique_AccClass_const unique(ClassId,AcademicId))
+
+CREATE TABLE AcademicStudent(
+AcademicStudentId BIGINT IDENTITY(1,1)PRIMARY KEY,
+StudentId BIGINT FOREIGN KEY REFERENCES Student(StudentId),
+AcademicId BIGINT FOREIGN KEY REFERENCES Academic(AcademicId),
+ClassId BIGINT FOREIGN KEY REFERENCES Class(ClassId),
+GroupId BIGINT FOREIGN KEY REFERENCES Groups(GroupId)
+CONSTRAINT unique_IsPass_const UNIQUE(StudentId,AcademicId,ClassId,GroupId),
+CreatedDate DATETIME NOT NULL,
+ModifiedDate DATETIME)
+
+select * from AcademicStudent
+select * from Student
+select * from Groups
+select * from Marks
+
+insert into AcademicStudent(StudentId,AcademicId,ClassId,GroupId,CreatedDate,ModifiedDate)values(101,1,1,1,GETDATE(),getdate())
+insert into AcademicStudent(StudentId,AcademicId,ClassId,GroupId,CreatedDate,ModifiedDate)values(102,1,1,1,GETDATE(),getdate())
+insert into AcademicStudent(StudentId,AcademicId,ClassId,GroupId,CreatedDate,ModifiedDate)values(103,1,1,1,GETDATE(),getdate())
+insert into AcademicStudent(StudentId,AcademicId,ClassId,GroupId,CreatedDate,ModifiedDate)values(104,1,1,1,GETDATE(),getdate())
+insert into AcademicStudent(StudentId,AcademicId,ClassId,GroupId,CreatedDate,ModifiedDate)values(105,1,1,1,GETDATE(),getdate())
+insert into AcademicStudent(StudentId,AcademicId,ClassId,GroupId,CreatedDate,ModifiedDate)values(106,1,1,1,GETDATE(),getdate())
+
+
+
+CREATE PROCEDURE sp_GetAcademicStudent
+AS
+BEGIN
+SELECT
+	*
+FROM
+	AcademicStudent
+END
+
+
+CREATE PROCEDURE sp_GetAcademicStudentId
+@AcademicStudentId BIGINT
+AS
+BEGIN
+SELECT
+	* 
+FROM
+	AcademicStudent
+WHERE
+	AcademicStudentId = @AcademicStudentId
+END
+
+
+
+Alter PROCEDURE sp_AddAcademicStudent
+@StudentId BIGINT,
+@AcademicId BIGINT,
+@ClassId BIGINT,
+@GroupId BIGINT
+AS
+BEGIN
+INSERT INTO AcademicStudent
+	(StudentId,
+	AcademicId,
+	ClassId,
+	GroupId,
+	CreatedDate)
+VALUES
+	(@StudentId,
+	@AcademicId,
+	@ClassId,
+	@GroupId,
+	GETDATE())
+END
+
+
+CREATE PROCEDURE sp_DeleteAcademicStudent
+@AcademicStudentId BIGINT
+AS
+BEGIN
+DELETE
+FROM
+	AcademicStudent
+WHERE
+	AcademicStudentId = @AcademicStudentId
+END
+
+
+Alter PROCEDURE sp_UpsertAcademicStudent
+@AcademicStudentId BIGINT,
+@StudentId BIGINT,
+@AcademicId BIGINT,
+@ClassId BIGINT,
+@GroupId BIGINT
+AS
+BEGIN
+IF EXISTS
+(SELECT
+	*
+FROM
+	AcademicStudent 
+WHERE
+	AcademicStudentId = @AcademicStudentId)
+UPDATE
+	AcademicStudent 
+SET
+	StudentId=@StudentId,
+	AcademicId=@AcademicId,
+	ClassId=@ClassId,
+	GroupId=@GroupId,
+	ModifiedDate=GETDATE() 
+WHERE
+	AcademicStudentId =@AcademicStudentId
+ELSE
+INSERT INTO AcademicStudent
+	(StudentId,
+	AcademicId,
+	ClassId,
+	GroupId,
+	CreatedDate)
+VALUES
+	(@StudentId,
+	@AcademicId,
+	@ClassId,
+	@GroupId,
+	GETDATE())
+END
+
+
+
+
+select * from AcademicStudent
+insert into AcademicStudent(StudentId,AcademicId,ClassId,GroupId)values(101,2,1,1)
+
+drop table Marks
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE Marks(
+MarksId BIGINT IDENTITY (1,1)PRIMARY KEY,
+MarksObtained INT NOT NULL,
+TotalMarksObtained INT,
+AcademicStudentId BIGINT FOREIGN KEY REFERENCES AcademicStudent(AcademicStudentId),
+ExamId BIGINT FOREIGN KEY REFERENCES Exams(ExamId),
+SubjectId BIGINT FOREIGN KEY REFERENCES Subjects(SubjectId)
+CONSTRAINT unique_IsMarks_const UNIQUE(AcademicStudentId,ExamId,SubjectId),
+CreatedDate DATETIME not null,
+ModifiedDate DATETIME)
+
+
+
+
+
+
+select * from Subjects
+select * from Marks
+select * from Exams
+select * from AcademicStudent
+
+
+
+insert into Marks(MarksObtained,TotalMarksObtained,AcademicStudentId,ExamId,SubjectId,CreatedDate,ModifiedDate)values(90,100,1,1001,1,getdate(),getdate())
+insert into Marks(MarksObtained,TotalMarksObtained,AcademicStudentId,ExamId,SubjectId,CreatedDate,ModifiedDate)values(80,100,1,1001,2,getdate(),getdate())
+insert into Marks(MarksObtained,TotalMarksObtained,AcademicStudentId,ExamId,SubjectId,CreatedDate,ModifiedDate)values(70,100,1,1001,3,getdate(),getdate())
+insert into Marks(MarksObtained,TotalMarksObtained,AcademicStudentId,ExamId,SubjectId,CreatedDate,ModifiedDate)values(60,100,1,1001,4,getdate(),getdate())
+insert into Marks(MarksObtained,TotalMarksObtained,AcademicStudentId,ExamId,SubjectId,CreatedDate,ModifiedDate)values(90,100,1,1001,5,getdate(),getdate())
+
+insert into Marks(MarksObtained,TotalMarksObtained,AcademicStudentId,ExamId,SubjectId,CreatedDate,ModifiedDate)values(95,100,2,1001,1,getdate(),getdate())
+insert into Marks(MarksObtained,TotalMarksObtained,AcademicStudentId,ExamId,SubjectId,CreatedDate,ModifiedDate)values(90,100,2,1001,2,getdate(),getdate())
+insert into Marks(MarksObtained,TotalMarksObtained,AcademicStudentId,ExamId,SubjectId,CreatedDate,ModifiedDate)values(90,100,2,1001,3,getdate(),getdate())
+insert into Marks(MarksObtained,TotalMarksObtained,AcademicStudentId,ExamId,SubjectId,CreatedDate,ModifiedDate)values(90,100,2,1001,4,getdate(),getdate())
+insert into Marks(MarksObtained,TotalMarksObtained,AcademicStudentId,ExamId,SubjectId,CreatedDate,ModifiedDate)values(100,100,2,1001,5,getdate(),getdate())
+
+
+insert into Marks(MarksObtained,TotalMarksObtained,AcademicStudentId,ExamId,SubjectId,CreatedDate,ModifiedDate)values(88,100,3,1001,1,getdate(),getdate())
+insert into Marks(MarksObtained,TotalMarksObtained,AcademicStudentId,ExamId,SubjectId,CreatedDate,ModifiedDate)values(89,100,3,1001,2,getdate(),getdate())
+insert into Marks(MarksObtained,TotalMarksObtained,AcademicStudentId,ExamId,SubjectId,CreatedDate,ModifiedDate)values(100,100,3,1001,3,getdate(),getdate())
+insert into Marks(MarksObtained,TotalMarksObtained,AcademicStudentId,ExamId,SubjectId,CreatedDate,ModifiedDate)values(99,100,3,1001,4,getdate(),getdate())
+insert into Marks(MarksObtained,TotalMarksObtained,AcademicStudentId,ExamId,SubjectId,CreatedDate,ModifiedDate)values(99,100,3,1001,5,getdate(),getdate())
+
+insert into Marks(MarksObtained,TotalMarksObtained,AcademicStudentId,ExamId,SubjectId,CreatedDate,ModifiedDate)values(92,100,4,1001,1,getdate(),getdate())
+insert into Marks(MarksObtained,TotalMarksObtained,AcademicStudentId,ExamId,SubjectId,CreatedDate,ModifiedDate)values(89,100,4,1001,2,getdate(),getdate())
+insert into Marks(MarksObtained,TotalMarksObtained,AcademicStudentId,ExamId,SubjectId,CreatedDate,ModifiedDate)values(100,100,4,1001,3,getdate(),getdate())
+insert into Marks(MarksObtained,TotalMarksObtained,AcademicStudentId,ExamId,SubjectId,CreatedDate,ModifiedDate)values(100,100,4,1001,4,getdate(),getdate())
+insert into Marks(MarksObtained,TotalMarksObtained,AcademicStudentId,ExamId,SubjectId,CreatedDate,ModifiedDate)values(91,100,4,1001,5,getdate(),getdate())
+
+
+insert into Marks(MarksObtained,TotalMarksObtained,AcademicStudentId,ExamId,SubjectId,CreatedDate,ModifiedDate)values(98,100,5,1001,1,getdate(),getdate())
+insert into Marks(MarksObtained,TotalMarksObtained,AcademicStudentId,ExamId,SubjectId,CreatedDate,ModifiedDate)values(99,100,5,1001,2,getdate(),getdate())
+insert into Marks(MarksObtained,TotalMarksObtained,AcademicStudentId,ExamId,SubjectId,CreatedDate,ModifiedDate)values(100,100,5,1001,3,getdate(),getdate())
+insert into Marks(MarksObtained,TotalMarksObtained,AcademicStudentId,ExamId,SubjectId,CreatedDate,ModifiedDate)values(99,100,5,1001,4,getdate(),getdate())
+insert into Marks(MarksObtained,TotalMarksObtained,AcademicStudentId,ExamId,SubjectId,CreatedDate,ModifiedDate)values(99,100,5,1001,5,getdate(),getdate())
+
+
+insert into Marks(MarksObtained,TotalMarksObtained,AcademicStudentId,ExamId,SubjectId,CreatedDate,ModifiedDate)values(98,100,6,1001,1,getdate(),getdate())
+insert into Marks(MarksObtained,TotalMarksObtained,AcademicStudentId,ExamId,SubjectId,CreatedDate,ModifiedDate)values(99,100,6,1001,2,getdate(),getdate())
+insert into Marks(MarksObtained,TotalMarksObtained,AcademicStudentId,ExamId,SubjectId,CreatedDate,ModifiedDate)values(100,100,6,1001,3,getdate(),getdate())
+insert into Marks(MarksObtained,TotalMarksObtained,AcademicStudentId,ExamId,SubjectId,CreatedDate,ModifiedDate)values(99,100,6,1001,4,getdate(),getdate())
+insert into Marks(MarksObtained,TotalMarksObtained,AcademicStudentId,ExamId,SubjectId,CreatedDate,ModifiedDate)values(99,100,6,1001,5,getdate(),getdate())
+
+
+Alter PROCEDURE sp_MarksReport
+AS
+SELECT
+	AcademicStudent.StudentId,
+	AcademicStudent.ClassId,
+	AcademicStudent.GroupId,
+	Marks.AcademicStudentId,
+	Marks.ExamId,
+	Marks.SubjectId,
+	Marks.MarksObtained,
+	Sum(Marks.MarksObtained)as Total,
+	Marks.TotalMarksObtained
+FROM
+	Marks 
+JOIN 
+	AcademicStudent 
+ON
+	Marks.AcademicStudentId = AcademicStudent.AcademicStudentId
+GROUP BY
+	AcademicStudent.ClassId,
+	AcademicStudent.GroupId,
+	AcademicStudent.StudentId,
+	Marks.AcademicStudentId,
+	Marks.ExamId,
+	Marks.SubjectId,
+	Marks.MarksObtained,
+	Marks.TotalMarksObtained
+
+
+EXECUTE sp_MarksReport
+
+
+select RollNo,FirstName,LastName,Gender,ClassName,Section,GroupName,ExamType,Tamil,English,Maths,Science,Social
+from
+(
+select Student.RollNo,Student.FirstName,Student.Lastname,Student.Gender,Class.ClassName,Class.Section,Groups.GroupName,Exams.ExamType,Subjects.SubjectName,Marks.MarksObtained
+from Marks 
+inner join AcademicStudent on   Marks.AcademicStudentId = AcademicStudent.AcademicStudentId 
+inner join Academic on Academic.AcademicId = AcademicStudent.AcademicId
+inner join Student on Student.StudentId = AcademicStudent.StudentId
+inner join Subjects on Subjects.SubjectId = AcademicStudent.StudentId
+inner join Groups on Groups.GroupId = AcademicStudent.GroupId
+inner join Class on Class.ClassId = AcademicStudent.ClassId
+inner join Exams on Exams.ExamId = Marks.ExamId
+) as temtable
+pivot
+(
+max(MarksObtained) for SubjectName in (Tamil,English,Maths,Science,Social)
+)as piv
+
+
+execute sp_Marks
+
+select * from Marks
+
+Alter PROCEDURE sp_Marks
+AS
+BEGIN
+SELECT 
+	Student.RollNo,
+	Student.FirstName,
+	Student.Lastname,
+	Student.Gender,
+	Class.ClassName,Class.Section,
+	Groups.GroupName,
+	Exams.ExamType,
+	Subjects.SubjectName,
+	Marks.MarksObtained
+FROM
+	Marks
+JOIN
+	AcademicStudent 
+ON
+	Marks.AcademicStudentId = AcademicStudent.AcademicStudentId
+JOIN
+	Academic
+ON
+	AcademicStudent.AcademicId = Academic.AcademicId
+JOIN 
+	Student 
+ON
+	AcademicStudent.StudentId = Student.StudentId
+JOIN 
+	Subjects 
+ON
+	Subjects.SubjectId = Marks.SubjectId
+JOIN 
+	Exams 
+ON
+	Exams.ExamId = Marks.ExamId
+JOIN 
+	Groups 
+ON
+	Groups.GroupId = AcademicStudent.GroupId
+JOIN
+	Class
+ON
+	Class.ClassId = AcademicStudent.ClassId
+END
+
+
+EXECUTE sp_Marks
+
+
+
+select * from Subjects
+select * from Marks
+
+
+Alter PROCEDURE sp_GetMarksByRollNo
+@RollNo VARCHAR(10)
+AS
+BEGIN
+SELECT 
+	Student.RollNo,
+	Student.FirstName,
+	Student.Lastname,
+	Student.Gender,
+	Class.ClassName,Class.Section,
+	Groups.GroupName,
+	Exams.ExamType,
+	Subjects.SubjectName,
+	Marks.MarksObtained
+FROM
+	Marks
+JOIN
+	AcademicStudent 
+ON
+	Marks.AcademicStudentId = AcademicStudent.AcademicStudentId
+JOIN
+	Academic
+ON
+	AcademicStudent.AcademicId = Academic.AcademicId
+JOIN 
+	Student 
+ON
+	AcademicStudent.StudentId = Student.StudentId
+JOIN 
+	Subjects 
+ON
+	Subjects.SubjectId = Marks.SubjectId
+JOIN 
+	Exams 
+ON
+	Exams.ExamId = Marks.ExamId
+JOIN 
+	Groups 
+ON
+	Groups.GroupId = AcademicStudent.GroupId
+JOIN
+	Class
+ON
+	Class.ClassId = AcademicStudent.ClassId 
+where 
+	RollNo = @RollNo
+END
+
+EXECUTE sp_GetMarksByRollNo 'IND104'
+
+
+--Alter procedure sp_MarksResult
+--@AcademicId bigint,
+--@ExamType VARCHAR(20),
+--@ClassName VARCHAR(20)
+--AS
+--BEGIN
+--SELECT 
+--	Student.RollNo,Student.FirstName,Student.Lastname,
+--	Class.ClassName,Class.Section,
+--	Groups.GroupName,
+--	Exams.ExamType,
+--	Subjects.SubjectName,
+--	Marks.MarksObtained,
+--	SUM(Marks.MarksObtained)
+--	OVER(PARTITION BY 
+--	Marks.AcademicStudentId,
+--	Marks.ExamId) AS Total
+--FROM
+--	Marks
+--JOIN AcademicStudent ON Marks.AcademicStudentId = AcademicStudent.AcademicStudentId
+--JOIN Academic ON AcademicStudent.AcademicId = Academic.AcademicId
+--JOIN Student ON AcademicStudent.StudentId = Student.StudentId
+--JOIN Subjects ON Subjects.SubjectId = Marks.SubjectId
+--JOIN Exams ON Exams.ExamId = Marks.ExamId
+--JOIN Groups ON Groups.GroupId = AcademicStudent.GroupId
+--JOIN Class ON Class.ClassId = AcademicStudent.ClassId
+--WHERE Academic.AcademicId = @AcademicId
+--AND Exams.ExamType = @ExamType
+--AND Class.ClassName = @ClassName
+--END
+
+
+execute sp_MarksResult 1,'Quaterly','1st Standard'
+
+
+
+--- Rank wise MarkList
+alter procedure sp_MarksList
+@AcademicId bigint,
+@ExamType varchar(20),
+@ClassName varchar(20)
+as
+begin
+SELECT 
+	RollNo,
+	FirstName,
+	Lastname,
+	Gender,
+    ClassName,
+	Section,
+	GroupName,
+	ExamType,
+	TotalMarks,
+	RANK() OVER (PARTITION BY ClassName,ExamType,Section ORDER BY TotalMarks DESC) as RankList
+FROM(
+	SELECT 
+		Student.RollNo AS RollNo,
+		Student.FirstName AS FirstName,
+		Student.Lastname AS Lastname,
+		Student.Gender AS Gender,
+		Class.ClassName AS ClassName,
+		Class.Section AS Section,
+		Groups.GroupName AS GroupName,
+		Exams.ExamType AS ExamType,
+		SUM(Marks.MarksObtained) AS TotalMarks	
+	FROM
+		Marks 
+	JOIN AcademicStudent ON Marks.AcademicStudentId = AcademicStudent.AcademicStudentId
+	JOIN Academic ON Academic.AcademicId = AcademicStudent.AcademicId
+	JOIN Student ON Student.StudentId = AcademicStudent.StudentId
+	JOIN Subjects ON Subjects.SubjectId = Marks.SubjectId
+	JOIN Exams ON Exams.ExamId = Marks.ExamId
+	JOIN Groups ON Groups.GroupId = AcademicStudent.GroupId
+	JOIN Class ON Class.ClassId = AcademicStudent.ClassId
+WHERE Academic.AcademicId = @AcademicId
+  AND Exams.ExamType = @ExamType
+  AND Class.ClassName = @ClassName
+GROUP BY RollNo,FirstName,Lastname,Gender,ClassName,Section,GroupName,ExamType
+) AS student_marks
+end
+
+
+execute sp_MarksList 1,'Quaterly','1st Standard'
+
+
+--create procedure sp_MarkListView
+--@AcademicId bigint,
+--@ExamType varchar(20),
+--@ClassName varchar(20)
+--as
+--begin
+--SELECT 
+--	RollNo,
+--	FirstName,
+--	Lastname,
+--    ClassName,
+--	Section,
+--	GroupName,
+--	ExamType,
+--	TotalMarks,
+--	RANK() OVER (PARTITION BY ClassName,ExamType,Section ORDER BY TotalMarks DESC) as RankList
+--FROM(
+--	SELECT 
+--		Student.RollNo AS RollNo,
+--		Student.FirstName AS FirstName,
+--		Student.Lastname AS Lastname,
+--		Class.ClassName AS ClassName,
+--		Class.Section AS Section,
+--		Groups.GroupName AS GroupName,
+--		Exams.ExamType AS ExamType,
+--		SUM(Marks.MarksObtained) AS TotalMarks	
+--	FROM
+--		Marks 
+--	JOIN AcademicStudent ON Marks.AcademicStudentId = AcademicStudent.AcademicStudentId
+--	JOIN Academic ON Academic.AcademicId = AcademicStudent.AcademicId
+--	JOIN Student ON Student.StudentId = AcademicStudent.StudentId
+--	JOIN Subjects ON Subjects.SubjectId = Marks.SubjectId
+--	JOIN Exams ON Exams.ExamId = Marks.ExamId
+--	JOIN Groups ON Groups.GroupId = AcademicStudent.GroupId
+--	JOIN Class ON Class.ClassId = AcademicStudent.ClassId
+--WHERE Academic.AcademicId = @AcademicId
+--  AND Exams.ExamType = @ExamType
+--  AND Class.ClassName = @ClassName
+--GROUP BY RollNo,FirstName,Lastname,ClassName,Section,GroupName,ExamType
+--) AS student_marks
+--end
+
+
+--execute sp_MarkListView 1,'Quaterly','1st Standard'
+
+
+
+select * from Class
+
+
+
+SELECT 
+	RollNo,
+	FirstName,
+	Lastname,
+    ClassName,
+	Section,
+	GroupName,
+	ExamType,
+	TotalMarks,
+	RANK() OVER (PARTITION BY ClassName,ExamType,Section ORDER BY TotalMarks DESC) as RankList
+FROM(
+	SELECT 
+		Student.RollNo AS RollNo,
+		Student.FirstName AS FirstName,
+		Student.Lastname AS Lastname,
+		Class.ClassName AS ClassName,
+		Class.Section AS Section,
+		Groups.GroupName AS GroupName,
+		Exams.ExamType AS ExamType,
+		SUM(Marks.MarksObtained) AS TotalMarks	
+	FROM
+		Marks 
+	JOIN AcademicStudent ON Marks.AcademicStudentId = AcademicStudent.AcademicStudentId
+	JOIN Academic ON Academic.AcademicId = AcademicStudent.AcademicId
+	JOIN Student ON Student.StudentId = AcademicStudent.StudentId
+	JOIN Subjects ON Subjects.SubjectId = Marks.SubjectId
+	JOIN Exams ON Exams.ExamId = Marks.ExamId
+	JOIN Groups ON Groups.GroupId = AcademicStudent.GroupId
+	JOIN Class ON Class.ClassId = AcademicStudent.ClassId
+WHERE Academic.AcademicId = 1
+  AND Exams.ExamType = 'Quaterly'
+  AND Class.ClassName = '1st Standard'
+GROUP BY RollNo,FirstName,Lastname,ClassName,Section,GroupName,ExamType
+) AS student_marks
+
+
+
+
+
+
+
+select * from User_Constraints where tableName = Academic
+
+
+
+select * from AcademicStudent
+
+
+
+
+
+--create table Marks(
+--MarksId bigint identity (1,1)primary key,
+--MarksObtained int not null,
+--TotalMarksObtained int,
+--AcademicStudentId bigint foreign key references AcademicStudent(AcademicStudentId),
+--ExamId bigint foreign key references Exams(ExamId),
+--SubjectId bigint foreign key references Subjects(SubjectId),
+--CreatedDate datetime,
+--ModifiedDate datetime)
+
+
+CREATE PROCEDURE sp_GetMarks
+AS
+BEGIN
+SELECT
+	*
+FROM
+	Marks
+END
+
+
+CREATE PROCEDURE sp_GetMarksId
+@MarksId BIGINT
+AS
+BEGIN
+SELECT
+	*
+FROM
+	Marks 
+WHERE
+	MarksId =@MarksId
+END
+
+
+CREATE PROCEDURE sp_AddMarks
+@MarksObtained INT,
+@TotalMarksObtained INT,
+@AcademicStudentId BIGINT,
+@ExamId BIGINT,
+@SubjectId BIGINT
+AS
+BEGIN
+INSERT INTO Marks
+	(MarksObtained,
+	TotalMarksObtained,
+	AcademicStudentId
+	,ExamId,
+	SubjectId,
+	CreatedDate)
+VALUES
+	(@MarksObtained,
+	@TotalMarksObtained,
+	@AcademicStudentId,
+	@ExamId,
+	@SubjectId,
+	GETDATE())
+END
+
+
+CREATE PROCEDURE sp_DeleteMarks
+@MarksId BIGINT
+AS
+BEGIN
+DELETE
+FROM
+	Marks
+WHERE
+	MarksId=@MarksId
+END
+
+
+CREATE PROCEDURE sp_UpsertMarks
+@MarksId BIGINT,
+@MarksObtained INT,
+@TotalMarksObtained INT,
+@AcademicStudentId BIGINT,
+@ExamId BIGINT,
+@SubjectId BIGINT
+AS
+BEGIN
+IF EXISTS
+(SELECT
+	*
+FROM
+	Marks
+WHERE
+	MarksId=@MarksId)
+UPDATE
+	Marks
+SET
+	MarksObtained=@MarksObtained,
+	TotalMarksObtained=@TotalMarksObtained,
+	AcademicStudentId=@AcademicStudentId,
+	ExamId=@ExamId,
+	SubjectId=@SubjectId,
+	ModifiedDate=GETDATE() 
+WHERE
+	MarksId=@MarksId
+ELSE
+INSERT INTO Marks
+	(MarksObtained,
+	TotalMarksObtained,
+	AcademicStudentId,
+	ExamId,
+	SubjectId,
+	CreatedDate)
+VALUES
+	(@MarksObtained,
+	@TotalMarksObtained,
+	@AcademicStudentId,
+	@ExamId,
+	@SubjectId,
+	GETDATE())
+END
+
+
+
+
+
+
+CREATE VIEW  AcademicStudentView 
+  AS 
+  SELECT AcademicStudentId,
+         studentId ,
+         AcademicId ,
+         ClassId,   
+		 GroupId,
+
+         CASE 
+         WHEN  IsPassed = 1  THEN 'pass '
+         WHEN  IsPassed = 0  THEN 'fail' 
+         ELSE NULL
+		 END
+		 CreatedDate,
+		 ModifiedDate
+		 FROM AcademicStudent
+         
+select * from AcademicStudentView
+
+--constraint unique_AcademicStudentmarks_const unique(StudentId,AcademicId,ClassId,GroupId,MarksObtained),
+--constraint unique_AcademicStudentpassed_const unique(StudentId,AcademicId,ClassId,GroupId,PassedMarks))
+
+
+
+
+drop table student
+drop table Academic
+drop table Class
+drop table Groups
+drop table Exams
+drop table Subjects
+drop table AcademicStudent
+drop table Marks
+
+
+
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+select * from Student
+select * from Academic
+select * from Class
+select * from Groups
+select * from Exams
+select * from Subjects
+select * from AcademicStudent
+Select * from Marks
+
+insert into student(RollNo,FirstName,Lastname,DateOfBirth,DateOfAdmission)values('INF1001','Aakash','C','11-04-1998',getdate())
+insert into student(RollNo,FirstName,Lastname,DateOfBirth,DateOfAdmission)values('INF1002','Monish','Rajini','01-06-2002',getdate())
+insert into student(RollNo,FirstName,Lastname,DateOfBirth,DateOfAdmission)values('INF1003','Mathan','Shankar','01-08-1997',getdate())
+insert into student(RollNo,FirstName,Lastname,DateOfBirth,DateOfAdmission)values('INF1004','Paaul','John','01-05-1999',getdate())
+insert into student(RollNo,FirstName,Lastname,DateOfBirth,DateOfAdmission)values('INF1005','Mohammed','Giya','01-12-1999',getdate())
+
+select * from Student
+
+insert into Academic(AcademicStartYear,AcademicEndYear)values(2020,2021)
+insert into Academic(AcademicStartYear,AcademicEndYear)values(2021,2022)
+insert into Academic(AcademicStartYear,AcademicEndYear)values(2022,2023)
+
+select * from Academic
+
+insert into ClassTable(ClassName,Section,AcademicId)values('6thStandard','A',1)
+insert into ClassTable(ClassName,Section,AcademicId)values('6thStandard','B',1)
+insert into ClassTable(ClassName,Section,AcademicId)values('7thStandard','A',1)
+insert into ClassTable(ClassName,Section,AcademicId)values('7thStandard','B',1)
+
+
+
+select * from ClassTable
+
+
+insert into Groups (GroupName) values ('MathsBiology')
+insert into Groups (GroupName) values ('ComputerScience')
+insert into Groups (GroupName) values ('Economics')
+
+
+select * from Groups
+
+
+insert into Exams (ExamType,AcademicId)values ('Quartely',2)
+insert into Exams (ExamType,AcademicId)values ('HalfYearly',1)
+
+
+select * from Exams
+
+
+
+insert into Subjects (SubjectName,SubjectCode,GroupId) values ('English','ENG101',1)
+insert into Subjects (SubjectName,SubjectCode,GroupId) values ('Tamil','TAM002',1)
+insert into Subjects (SubjectName,SubjectCode,GroupId) values ('Maths','MAT003',1)
+insert into Subjects (SubjectName,SubjectCode,GroupId) values ('Science','SCI004',1)
+insert into Subjects (SubjectName,SubjectCode,GroupId) values ('Social','SOC005',1)
+
+insert into Subjects (SubjectName,SubjectCode,GroupId) values ('English','ENG101',2)
+insert into Subjects (SubjectName,SubjectCode,GroupId) values ('Tamil','TAM002',2)
+insert into Subjects (SubjectName,SubjectCode,GroupId) values ('Maths','MAT003',2)
+insert into Subjects (SubjectName,SubjectCode,GroupId) values ('Science','SCI004',2)
+insert into Subjects (SubjectName,SubjectCode,GroupId) values ('Social','SOC005',2)
+
+
+select * from Subjects
+
+
+insert into AcademicStudent(IsPassed,StudentId,AcademicId,ClassId,GroupId)values(1,101,2,2,1)
+
+
+
+select * from AcademicStudent
+
+select * from Class
+
+
+--drop table AcademicStudent
+--drop table Subjects
+--drop table Groups
+
+
+select * from Marks
+
+
+--drop table ClassTable
+
+
+
+
+drop table student
+drop table Academic
+drop table Class
+drop table Groups
+drop table Exams
+drop table Subjects
+drop table AcademicStudent
+drop table Marks
